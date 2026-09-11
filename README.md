@@ -19,27 +19,52 @@ The system uses an **API Gateway** to control communication between the client a
 
 ```mermaid
 flowchart TD
-    Client([👤 Client / Postman])
+    Client([👤 Client])
 
-    Client --> Gateway["🚪 API Gateway<br/>Port: 3000"]
+    Client --> Gateway
 
-    Gateway --> Register["📝 Register<br/>Port: 3001"]
-    Gateway --> Login["🔑 Login<br/>Port: 3002"]
-    Gateway --> User["👥 User<br/>Port: 3003"]
+    subgraph Gateway["🚪 API Gateway Microservice"]
+        direction TB
+        G1[JWT Validation]
+        G2[Role Validation]
+        G3[Request Routing]
+    end
 
-    User --> Admin["🛡️ Admin<br/>Port: 3004"]
+    Gateway --> Reg
+    Gateway --> Login
+    Gateway --> Admin
+    Gateway --> User
 
-    Admin --> DB[(MongoDB)]
+    subgraph Reg["📝 Registration Service"]
+    end
+    subgraph Login["🔑 Login Service"]
+    end
+    subgraph Admin["🛡️ Admin Service"]
+    end
+    subgraph User["👥 User Service"]
+    end
+
+    RegDB[(MongoDB)]
+    AdminDB[(MongoDB)]
+    UserDB[(MongoDB)]
+    JWT[/JWT Token/]
+
+    Reg --> RegDB
+    Login -.-> JWT
+    Admin --> AdminDB
+    User --> UserDB
 
     classDef gateway fill:#4A5568,stroke:#2D3748,color:#fff,stroke-width:2px
     classDef service fill:#3182CE,stroke:#2C5282,color:#fff,stroke-width:2px
     classDef db fill:#38A169,stroke:#276749,color:#fff,stroke-width:2px
+    classDef token fill:#DD6B20,stroke:#9C4221,color:#fff,stroke-width:2px
     classDef client fill:#805AD5,stroke:#553C9A,color:#fff,stroke-width:2px
 
     class Client client
-    class Gateway gateway
-    class Register,Login,User,Admin service
-    class DB db
+    class Gateway,G1,G2,G3 gateway
+    class Reg,Login,Admin,User service
+    class RegDB,AdminDB,UserDB db
+    class JWT token
 ```
 
 ---
